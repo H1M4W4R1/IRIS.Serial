@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latestmajor</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IRIS\IRIS.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Communication\CachedSerialPortInterface.cs">
+        <SubType>Component</SubType>
+      </Compile>
+      <Compile Update="Communication\SerialPortInterface.cs">
+        <SubType>Component</SubType>
+      </Compile>
+    </ItemGroup>
+
+</Project>
