@@ -86,9 +86,9 @@ namespace IRIS.Serial.Addressing
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 // Check if file name starts with /dev
-                if (deviceAddress.StartsWith("/dev"))
+                if (deviceAddress.StartsWith("/dev", StringComparison.InvariantCulture))
                     Address = deviceAddress;
-                else if(deviceAddress.StartsWith("dev"))
+                else if(deviceAddress.StartsWith("dev", StringComparison.InvariantCulture))
                     Address = $"/{deviceAddress}";
                 else
                     Address = $"/dev/{deviceAddress}";
