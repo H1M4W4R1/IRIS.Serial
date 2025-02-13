@@ -1,5 +1,9 @@
-﻿using System.Management;
+﻿using System;
+using System.Collections.Generic;
+using System.Management;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using IRIS.Addressing.Ports;
 using IRIS.Recognition;
 using IRIS.Serial.Addressing;

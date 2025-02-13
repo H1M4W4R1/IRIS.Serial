@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using IRIS.Addressing.Abstract;
 
 namespace IRIS.Serial.Addressing
@@ -94,10 +96,10 @@ namespace IRIS.Serial.Addressing
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // Check if file name starts with COM
-                if (deviceAddress.StartsWith("COM"))
+                if (deviceAddress.StartsWith("COM", StringComparison.InvariantCulture))
                     Address = deviceAddress;
                 // Attempt to fix COM port name if case is wrong
-                else if(deviceAddress.StartsWith("com"))
+                else if(deviceAddress.StartsWith("com", StringComparison.InvariantCulture))
                     Address = $"COM{deviceAddress.Replace("com", "")}";
                 // Attempt to connect to COM port if only number is provided
                 else
