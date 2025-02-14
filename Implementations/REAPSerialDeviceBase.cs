@@ -12,7 +12,7 @@ namespace IRIS.Serial.Implementations
         public async ValueTask<uint> SetRegister(uint register, uint value) =>
             await REAP<CachedSerialPortInterface>.SetRegister(HardwareAccess, register, value);
         
-        public async ValueTask<uint> GetRegister(uint register) =>
+        public async ValueTask<uint?> GetRegister(uint register) =>
             await REAP<CachedSerialPortInterface>.GetRegister(HardwareAccess, register);
         
     }

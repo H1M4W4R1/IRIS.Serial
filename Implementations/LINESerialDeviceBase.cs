@@ -17,7 +17,7 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public async ValueTask<string> ExchangeMessages(string message) =>
+        public async ValueTask<string?> ExchangeMessages(string message) =>
             await LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
@@ -29,6 +29,6 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Read message from device
         /// </summary>
-        public async ValueTask<string> ReadMessage() => await LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        public async ValueTask<string?> ReadMessage() => await LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }
