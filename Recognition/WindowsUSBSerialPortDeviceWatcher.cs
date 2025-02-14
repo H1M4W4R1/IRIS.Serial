@@ -28,7 +28,7 @@ namespace IRIS.Serial.Recognition
         /// <summary>
         /// Scan for all available devices
         /// </summary>
-        protected override Task<(List<USBDeviceAddress>, List<SerialPortDeviceAddress>)>
+        protected override ValueTask<(List<USBDeviceAddress>, List<SerialPortDeviceAddress>)>
             ScanForDevicesAsync(CancellationToken cancellationToken)
         {
             if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -104,7 +104,7 @@ namespace IRIS.Serial.Recognition
             }
             
             // Return devices
-            return Task.FromResult((hardwareDevices, softwareDevices));
+            return ValueTask.FromResult((hardwareDevices, softwareDevices));
         }
         
     }

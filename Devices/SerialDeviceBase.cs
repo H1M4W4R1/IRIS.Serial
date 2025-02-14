@@ -27,7 +27,7 @@ namespace IRIS.Serial.Devices
         /// <summary>
         /// Change device address to new one
         /// </summary>
-        public async Task SetAddress(
+        public async ValueTask SetAddress(
             SerialPortDeviceAddress deviceAddress,
             CancellationToken cancellationToken = default)
         {

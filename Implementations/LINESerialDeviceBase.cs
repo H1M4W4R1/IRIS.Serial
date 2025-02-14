@@ -18,18 +18,18 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public async Task<string> ExchangeMessages(string message) =>
+        public async ValueTask<string> ExchangeMessages(string message) =>
             await LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
         /// Send message to device
         /// </summary>
-        public async Task SendMessage(string message) =>
+        public async ValueTask SendMessage(string message) =>
             await LINE<CachedSerialPortInterface>.SendMessage(HardwareAccess, message);
 
         /// <summary>
         /// Read message from device
         /// </summary>
-        public async Task<string> ReadMessage() => await LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        public async ValueTask<string> ReadMessage() => await LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }

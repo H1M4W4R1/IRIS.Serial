@@ -19,7 +19,7 @@ namespace IRIS.Serial.Recognition
         /// <summary>
         /// Scan for all available devices
         /// </summary>
-        protected override Task<(List<SerialPortDeviceAddress>, List<SerialPortDeviceAddress>)>
+        protected override ValueTask<(List<SerialPortDeviceAddress>, List<SerialPortDeviceAddress>)>
             ScanForDevicesAsync(CancellationToken cancellationToken)
         {
             // Get all available serial ports
@@ -42,7 +42,7 @@ namespace IRIS.Serial.Recognition
             }
             
             // Return devices
-            return Task.FromResult((hardwareDevices, softwareDevices));
+            return ValueTask.FromResult((hardwareDevices, softwareDevices));
         }
     }
 }

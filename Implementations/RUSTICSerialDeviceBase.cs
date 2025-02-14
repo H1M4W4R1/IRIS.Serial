@@ -22,7 +22,7 @@ namespace IRIS.Serial.Implementations
         /// <remarks>
         /// Uses ToString() method to convert <see cref="value"/> to string
         /// </remarks>
-        protected async Task<bool> SetProperty<TValueType>(string message, TValueType value)
+        protected async ValueTask<bool> SetProperty<TValueType>(string message, TValueType value)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Sends GET message to device and returns the response <br/>
         /// </summary>
-        protected async Task<string> GetProperty(string propertyName)
+        protected async ValueTask<string> GetProperty(string propertyName)
         {
             (string _, string value) =
                 await RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
