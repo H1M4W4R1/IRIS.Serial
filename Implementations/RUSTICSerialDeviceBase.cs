@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using IRIS.Protocols.IRIS;
+﻿using IRIS.Protocols.IRIS;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
 using IRIS.Serial.Communication.Settings;

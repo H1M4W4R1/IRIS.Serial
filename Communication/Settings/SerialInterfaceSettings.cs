@@ -9,7 +9,7 @@ namespace IRIS.Serial.Communication.Settings
         bool useDtr = false, bool useRts = false)
     {
         // ReSharper disable once InconsistentNaming
-        public static readonly SerialInterfaceSettings Default = new(115200, Parity.None, 8, StopBits.One, false, false);
+        public static readonly SerialInterfaceSettings Default = new(115200);
         
         /// <summary>
         /// Baud rate of serial port

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO.Ports;
 using IRIS.Communication;
 using IRIS.Communication.Types;
 

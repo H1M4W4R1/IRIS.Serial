@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO.Ports;
 using IRIS.Communication;
 using IRIS.Communication.Types;
 
@@ -224,7 +220,7 @@ namespace IRIS.Serial.Communication
                 if (cancellationToken.IsCancellationRequested) return [];
 
                 // Local byte variable
-                byte currentByte = 0;
+                byte currentByte;
                 
                 lock (_dataReceived)
                 {
