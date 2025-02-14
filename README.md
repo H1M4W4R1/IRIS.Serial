@@ -1,4 +1,5 @@
 ﻿# IRIS<sup>2</sup>: Intermediate Resource Integration System - Serial Package
+[IRIS<sup>2</sup>](https://github.com/H1M4W4R1/IRIS) package for interfacing with serial devices.
 
 ## Devices
 ### SerialDeviceBase
