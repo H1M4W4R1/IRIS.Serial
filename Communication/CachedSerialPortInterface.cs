@@ -33,9 +33,9 @@ namespace IRIS.Serial.Communication
         /// </summary>
         private CancellationToken _tokenRef = CancellationToken.None;
         
-        public event Delegates.OnDeviceConnected<SerialPortDeviceAddress>? DeviceConnected;
-        public event Delegates.OnDeviceDisconnected<SerialPortDeviceAddress>? DeviceDisconnected;
-        public event Delegates.DeviceConnectionLost<SerialPortDeviceAddress>? DeviceConnectionLost;
+        public event Delegates.DeviceConnectedHandler<SerialPortDeviceAddress>? DeviceConnected;
+        public event Delegates.DeviceDisconnectedHandler<SerialPortDeviceAddress>? DeviceDisconnected;
+        public event Delegates.DeviceConnectionLostHandler<SerialPortDeviceAddress>? DeviceConnectionLost;
 
         public CachedSerialPortInterface(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits,
             bool dtrEnable, bool rtsEnable)

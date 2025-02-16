@@ -17,9 +17,9 @@ namespace IRIS.Serial.Communication
         /// </summary>
         private readonly byte[] _singleCharReadBuffer = new byte[1];
        
-        public event Delegates.OnDeviceConnected<SerialPortDeviceAddress>? DeviceConnected;
-        public event Delegates.OnDeviceDisconnected<SerialPortDeviceAddress>? DeviceDisconnected;
-        public event Delegates.DeviceConnectionLost<SerialPortDeviceAddress>? DeviceConnectionLost;
+        public event Delegates.DeviceConnectedHandler<SerialPortDeviceAddress>? DeviceConnected;
+        public event Delegates.DeviceDisconnectedHandler<SerialPortDeviceAddress>? DeviceDisconnected;
+        public event Delegates.DeviceConnectionLostHandler<SerialPortDeviceAddress>? DeviceConnectionLost;
         
         public SerialPortInterface(string portName,
             int baudRate,
