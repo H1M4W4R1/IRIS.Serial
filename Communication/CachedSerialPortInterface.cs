@@ -1,6 +1,7 @@
 ﻿using System.IO.Ports;
 using IRIS.Communication;
 using IRIS.Communication.Types;
+using IRIS.Serial.Addressing;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -10,7 +11,7 @@ namespace IRIS.Serial.Communication
     /// Reliable serial port, as regular one is really unreliable in data receiving.
     /// Buffers data as unbuffered event-driven solution would bend space-time continuum (quite literally).
     /// </summary>
-    public sealed class CachedSerialPortInterface : SerialPort, IRawDataCommunicationInterface
+    public sealed class CachedSerialPortInterface : SerialPort, IRawDataCommunicationInterface<SerialPortDeviceAddress>
     {
         /// <summary>
         /// Storage of all data received
@@ -32,7 +33,9 @@ namespace IRIS.Serial.Communication
         /// </summary>
         private CancellationToken _tokenRef = CancellationToken.None;
         
-        public event Delegates.DeviceConnectionLost? OnDeviceConnectionLost;
+        public event Delegates.OnDeviceConnected<SerialPortDeviceAddress>? DeviceConnected;
+        public event Delegates.OnDeviceDisconnected<SerialPortDeviceAddress>? DeviceDisconnected;
+        public event Delegates.DeviceConnectionLost<SerialPortDeviceAddress>? DeviceConnectionLost;
 
         public CachedSerialPortInterface(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits,
             bool dtrEnable, bool rtsEnable)
@@ -65,6 +68,8 @@ namespace IRIS.Serial.Communication
             // Begin continuous read
             BeginContinuousRead(_tokenRef);
             
+            DeviceConnected?.Invoke(new SerialPortDeviceAddress(PortName));
+            
             return true;
         }
 
@@ -79,6 +84,8 @@ namespace IRIS.Serial.Communication
             // Close port
             Close();
             
+            // Invoke event
+            DeviceDisconnected?.Invoke(new SerialPortDeviceAddress(PortName));
             return true;
         }
         
@@ -90,7 +97,7 @@ namespace IRIS.Serial.Communication
             // Check if port is open
             if (!IsOpen)
             {
-                OnDeviceConnectionLost?.Invoke();
+                DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
                 return;
             }
             
@@ -138,7 +145,7 @@ namespace IRIS.Serial.Communication
         {
             if (!IsOpen)
             {
-                OnDeviceConnectionLost?.Invoke();
+                DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
                 return ValueTask.CompletedTask;
             }
 
@@ -158,7 +165,7 @@ namespace IRIS.Serial.Communication
         {
             if (!IsOpen)
             {
-                OnDeviceConnectionLost?.Invoke();
+                DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
                 return [];
             }
 
@@ -202,7 +209,7 @@ namespace IRIS.Serial.Communication
             // Check if device is open
             if (!IsOpen)
             {
-                OnDeviceConnectionLost?.Invoke();
+                DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
                 return [];
             }
 
@@ -241,5 +248,7 @@ namespace IRIS.Serial.Communication
         }
 
 #endregion
+
+        
     }
 }
