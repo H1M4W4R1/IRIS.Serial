@@ -1,6 +1,8 @@
 ﻿using System.IO.Ports;
 using IRIS.Communication;
 using IRIS.Communication.Types;
+using IRIS.Data;
+using IRIS.Data.Implementations;
 using IRIS.Serial.Addressing;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -44,7 +46,7 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Connect to device - open port and start reading data
         /// </summary>
-        public async ValueTask<bool> Connect(CancellationToken cancellationToken)
+        public bool Connect(CancellationToken cancellationToken)
         {
             // If port is already open, return
             if(IsOpen) return true;
@@ -59,7 +61,7 @@ namespace IRIS.Serial.Communication
             return true;
         }
 
-        public async ValueTask<bool> Disconnect(CancellationToken cancellationToken)
+        public bool Disconnect()
         {
             // If port is not open, return
             if (!IsOpen) return true;
@@ -75,18 +77,18 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Transmit data to device over serial port
         /// </summary>
-        ValueTask IRawDataCommunicationInterface.TransmitRawData(byte[] data)
+        DeviceResponseBase IRawDataCommunicationInterface.TransmitRawData(byte[] data)
         {
             if (!IsOpen)
             {
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
-                return ValueTask.CompletedTask;
+                return NoResponse.Instance;
             }
 
             // Write data to device
             Write(data, 0, data.Length);
             
-            return ValueTask.CompletedTask;
+            return OKResponse.Instance;
         }
 
         /// <summary>
@@ -94,29 +96,44 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="length">Amount of data to read</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
-        /// <returns></returns>
-        async ValueTask<byte[]?> IRawDataCommunicationInterface.ReadRawData(int length, CancellationToken cancellationToken)
+        DeviceResponseBase IRawDataCommunicationInterface.ReadRawData(int length, CancellationToken cancellationToken)
         {
             if (!IsOpen)
             {
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
-                return [];
+                return NoResponse.Instance;
             }
 
             // Create buffer for data
-            // TODO: Get rid of this allocation
             byte[] data = new byte[length];
             int bytesRead = 0;
 
             // Read data until all data is read
             while (bytesRead < length)
             {
-                bytesRead += await BaseStream.ReadAsync(data, bytesRead, length - bytesRead, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                try
+                {
+                    // Create task to read data
+                    Task<int> readTask = BaseStream.ReadAsync(data, bytesRead, length - bytesRead, cancellationToken);
+
+                    // Wait for task to complete
+                    while (!readTask.IsCompleted)
+                    {
+                        if (cancellationToken.IsCancellationRequested) return RequestTimeout.Instance;
+                    }
+
+                    bytesRead += readTask.Result;
+                    if (cancellationToken.IsCancellationRequested) 
+                        return RequestTimeout.Instance;
+                }
+                catch (TaskCanceledException)
+                {
+                    return RequestTimeout.Instance;
+                }
             }
 
             // Return data
-            return data;
+            return new RawDataResponse(data);
         }
 
         /// <summary>
@@ -124,25 +141,34 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="receivedByte">Byte to find</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
-        /// <returns>Array of data, if byte is not found, empty array is returned</returns>
-        async ValueTask<byte[]?> IRawDataCommunicationInterface.ReadRawDataUntil(byte receivedByte,
+        DeviceResponseBase IRawDataCommunicationInterface.ReadRawDataUntil(byte receivedByte,
             CancellationToken cancellationToken)
         {
             // Check if device is open
             if (!IsOpen)
             {
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
-                return [];
+                return NoResponse.Instance;
             }
 
             // Read data until byte is found
-            // TODO: Get rid of this allocation
             List<byte> data = new List<byte>();
 
             // Read data until byte is found
             while (true)
             {
-                int bytesRead = await BaseStream.ReadAsync(_singleCharReadBuffer, 0, 1, cancellationToken);
+                Task<int> readTask = BaseStream.ReadAsync(_singleCharReadBuffer, 0, 1, cancellationToken);
+                
+                // Wait for task to complete
+                while (!readTask.IsCompleted)
+                {
+                    if (cancellationToken.IsCancellationRequested) return RequestTimeout.Instance;
+                }
+                
+                // Get bytes read
+                int bytesRead = readTask.Result;
+                
+                // Check if cancellation is requested
                 if (cancellationToken.IsCancellationRequested) break;
                 
                 // Check if data is read
@@ -156,7 +182,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return data.ToArray();
+            return new RawDataResponse(data.ToArray());
         }
 
 #endregion

@@ -25,18 +25,18 @@ namespace IRIS.Serial.Devices
         /// <summary>
         /// Change device address to new one
         /// </summary>
-        public async ValueTask SetAddress(
+        public void SetAddress(
             SerialPortDeviceAddress deviceAddress,
             CancellationToken cancellationToken = default)
         {
             // Check if port is open
             bool wasPortOpen = HardwareAccess.IsOpen;
-            if (wasPortOpen) await HardwareAccess.Disconnect(cancellationToken);
+            if (wasPortOpen) HardwareAccess.Disconnect();
 
             HardwareAccess.PortName = deviceAddress.ToString();
 
             // If port was open then connect again
-            if (wasPortOpen) await HardwareAccess.Connect(cancellationToken);
+            if (wasPortOpen) HardwareAccess.Connect(cancellationToken);
         }
     }
 }

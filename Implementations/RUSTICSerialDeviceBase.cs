@@ -1,4 +1,6 @@
-﻿using IRIS.Protocols.IRIS;
+﻿using IRIS.Data;
+using IRIS.Protocols.IRIS;
+using IRIS.Protocols.IRIS.Data;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
 using IRIS.Serial.Communication.Settings;
@@ -11,38 +13,22 @@ namespace IRIS.Serial.Implementations
     /// </summary>
     public abstract class RUSTICSerialDeviceBase(
         SerialPortDeviceAddress deviceAddress,
-        SerialInterfaceSettings settings) : SerialDeviceBase(deviceAddress, settings)
+        SerialInterfaceSettings settings
+    ) : SerialDeviceBase(deviceAddress, settings)
     {
         /// <summary>
         /// Sends SET message to device and returns the response <br/>
         /// E.g. PROPERTY to desired value
         /// </summary>
-        /// <remarks>
-        /// Uses ToString() method to convert <see cref="value"/> to string
-        /// </remarks>
-        protected async ValueTask<bool> SetProperty<TValueType>(string message, TValueType value)
-        {
-            try
-            {
-                return await RUSTIC<CachedSerialPortInterface>.SetProperty(message, value?.ToString(), HardwareAccess, 100);
-            }
-            catch(TimeoutException)
-            {
-                // If the device does not respond in time, return false
-                // value may be set, but we cannot confirm it, so assume it is not
-                return false;
-            }
-        }
+        protected DataPromise<RUSTICDeviceProperty> SetProperty<TValueType>(string message, TValueType value)
+            where TValueType : notnull
+            => RUSTIC<CachedSerialPortInterface>.SetProperty(message, value.ToString() ?? string.Empty,
+                HardwareAccess, 100);
 
         /// <summary>
         /// Sends GET message to device and returns the response <br/>
         /// </summary>
-        protected async ValueTask<string> GetProperty(string propertyName)
-        {
-            (string _, string value) =
-                await RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
-
-            return value;
-        }
+        protected DataPromise<RUSTICDeviceProperty> GetProperty(string propertyName)
+            => RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
     }
 }
