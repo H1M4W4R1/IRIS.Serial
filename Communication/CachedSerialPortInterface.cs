@@ -57,7 +57,7 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Connect to device - open port and start reading data
         /// </summary>
-        public async ValueTask<bool> Connect(CancellationToken cancellationToken)
+        public async ValueTask<bool> ConnectAsync(CancellationToken cancellationToken)
         {
             // Do not connect if already connected
             if (IsOpen) return true;
@@ -75,13 +75,13 @@ namespace IRIS.Serial.Communication
             return true;
         }
 
-        public async ValueTask<bool> Disconnect()
+        public async ValueTask<bool> DisconnectAsync()
         {
             // Check if port is open
             if (!IsOpen) return true;
             
             // Cancel reading
-            _cancellationTokenSource.Cancel();
+            await _cancellationTokenSource.CancelAsync();
             
             // Close port
             Close();
@@ -143,7 +143,7 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Transmit data to device over serial port
         /// </summary>
-        async ValueTask<bool> IRawDataCommunicationInterface.TransmitRawData(byte[] data)
+        async ValueTask<bool> IRawDataCommunicationInterface.TransmitRawDataAsync(byte[] data)
         {
             if (!IsOpen)
             {
@@ -163,7 +163,7 @@ namespace IRIS.Serial.Communication
         /// <param name="length">Amount of data to read</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
         /// <returns></returns>
-        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawData(int length, CancellationToken cancellationToken)
+        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataAsync(int length, CancellationToken cancellationToken)
         {
             if (!IsOpen)
             {
@@ -204,7 +204,7 @@ namespace IRIS.Serial.Communication
         /// <param name="receivedByte">Byte to find</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
         /// <returns>Array of data, if byte is not found, empty array is returned</returns>
-        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataUntil(byte receivedByte,
+        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataUntilByteAsync(byte receivedByte,
             CancellationToken cancellationToken)
         {
             // Check if device is open

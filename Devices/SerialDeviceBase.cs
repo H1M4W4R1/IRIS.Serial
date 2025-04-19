@@ -31,12 +31,12 @@ namespace IRIS.Serial.Devices
         {
             // Check if port is open
             bool wasPortOpen = HardwareAccess.IsOpen;
-            if (wasPortOpen) await HardwareAccess.Disconnect();
+            if (wasPortOpen) await HardwareAccess.DisconnectAsync();
 
             HardwareAccess.PortName = deviceAddress.ToString();
 
             // If port was open then connect again
-            if (wasPortOpen) await HardwareAccess.Connect(cancellationToken);
+            if (wasPortOpen) await HardwareAccess.ConnectAsync(cancellationToken);
         }
     }
 }

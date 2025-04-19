@@ -3,7 +3,6 @@ using IRIS.Communication;
 using IRIS.Communication.Types;
 using IRIS.Exceptions;
 using IRIS.Serial.Addressing;
-using IRIS.Utility;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -47,7 +46,7 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Connect to device - open port and start reading data
         /// </summary>
-        public async ValueTask<bool> Connect(CancellationToken cancellationToken)
+        public async ValueTask<bool> ConnectAsync(CancellationToken cancellationToken)
         {
             // If port is already open, return
             if (IsOpen) return true;
@@ -62,7 +61,7 @@ namespace IRIS.Serial.Communication
             return true;
         }
 
-        public async ValueTask<bool> Disconnect()
+        public async ValueTask<bool> DisconnectAsync()
         {
             // If port is not open, return
             if (!IsOpen) return true;
@@ -78,7 +77,7 @@ namespace IRIS.Serial.Communication
         /// <summary>
         /// Transmit data to device over serial port
         /// </summary>
-        ValueTask<bool> IRawDataCommunicationInterface.TransmitRawData(byte[] data)
+        ValueTask<bool> IRawDataCommunicationInterface.TransmitRawDataAsync(byte[] data)
         {
             if (!IsOpen)
             {
@@ -97,7 +96,7 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="length">Amount of data to read</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
-        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawData(
+        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataAsync(
             int length,
             CancellationToken cancellationToken)
         {
@@ -132,7 +131,7 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="receivedByte">Byte to find</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
-        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataUntil(
+        async ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataUntilByteAsync(
             byte receivedByte,
             CancellationToken cancellationToken)
         {

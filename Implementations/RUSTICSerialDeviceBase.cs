@@ -21,13 +21,13 @@ namespace IRIS.Serial.Implementations
         /// </summary>
         protected ValueTask<RUSTICDeviceProperty> SetProperty<TValueType>(string message, TValueType value)
             where TValueType : notnull
-            => RUSTIC<CachedSerialPortInterface>.SetProperty(message, value.ToString() ?? string.Empty,
+            => RUSTIC<CachedSerialPortInterface>.SetPropertyAsync(message, value.ToString() ?? string.Empty,
                 HardwareAccess, 100);
 
         /// <summary>
         /// Sends GET message to device and returns the response <br/>
         /// </summary>
         protected ValueTask<RUSTICDeviceProperty> GetProperty(string propertyName)
-            => RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
+            => RUSTIC<CachedSerialPortInterface>.GetPropertyAsync(propertyName, HardwareAccess);
     }
 }
