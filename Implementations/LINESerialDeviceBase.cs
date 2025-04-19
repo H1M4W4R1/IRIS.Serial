@@ -1,5 +1,4 @@
-﻿using IRIS.Data;
-using IRIS.Protocols.IRIS;
+﻿using IRIS.Protocols.IRIS;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
 using IRIS.Serial.Communication.Settings;
@@ -13,23 +12,25 @@ namespace IRIS.Serial.Implementations
     /// </summary>
     public abstract class LINESerialDeviceBase(
         SerialPortDeviceAddress deviceAddress,
-        SerialInterfaceSettings settings) : SerialDeviceBase(deviceAddress, settings)
+        SerialInterfaceSettings settings
+    ) : SerialDeviceBase(deviceAddress, settings)
     {
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public DataPromise<string> ExchangeMessages(string message) =>
+        public ValueTask<string> ExchangeMessages(string message) =>
             LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
         /// Send message to device
         /// </summary>
-        public void SendMessage(string message) =>
+        public ValueTask<bool> SendMessage(string message) =>
             LINE<CachedSerialPortInterface>.SendMessage(HardwareAccess, message);
 
         /// <summary>
         /// Read message from device
         /// </summary>
-        public DataPromise<string> ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        public ValueTask<string> ReadMessage()
+            => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }
