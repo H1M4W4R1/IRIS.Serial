@@ -3,7 +3,6 @@ using IRIS.Communication;
 using IRIS.Communication.Abstract;
 using IRIS.Exceptions;
 using IRIS.Serial.Addressing;
-using IRIS.Utility;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
