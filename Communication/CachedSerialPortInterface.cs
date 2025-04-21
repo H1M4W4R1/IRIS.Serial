@@ -1,6 +1,6 @@
 ﻿using System.IO.Ports;
 using IRIS.Communication;
-using IRIS.Communication.Types;
+using IRIS.Communication.Abstract;
 using IRIS.Exceptions;
 using IRIS.Serial.Addressing;
 using IRIS.Utility;
