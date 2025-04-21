@@ -9,12 +9,12 @@ using IRIS.Serial.Addressing;
 namespace IRIS.Serial.Communication
 {
     /// <summary>
-    /// Serial port interface for communication with devices.
+    ///     Serial port interface for communication with devices.
     /// </summary>
     public sealed class SerialPortInterface : SerialPort, IRawDataCommunicationInterface<SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Used when reading data stream by single character to prevent unnecessary allocations
+        ///     Used when reading data stream by single character to prevent unnecessary allocations
         /// </summary>
         private readonly byte[] _singleCharReadBuffer = new byte[1];
 
@@ -44,7 +44,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Connect to device - open port and start reading data
+        ///     Connect to device - open port and start reading data
         /// </summary>
         public async ValueTask<bool> ConnectAsync(CancellationToken cancellationToken)
         {
@@ -75,7 +75,7 @@ namespace IRIS.Serial.Communication
 #region IRawDataCommunicationInterface
 
         /// <summary>
-        /// Transmit data to device over serial port
+        ///     Transmit data to device over serial port
         /// </summary>
         ValueTask<bool> IRawDataCommunicationInterface.TransmitRawDataAsync(byte[] data)
         {
@@ -92,7 +92,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Read data from device over serial port
+        ///     Read data from device over serial port
         /// </summary>
         /// <param name="length">Amount of data to read</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
@@ -127,7 +127,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Reads data until specified byte is found
+        ///     Reads data until specified byte is found
         /// </summary>
         /// <param name="receivedByte">Byte to find</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>

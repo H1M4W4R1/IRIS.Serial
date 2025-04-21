@@ -8,7 +8,7 @@ using IRIS.Serial.Devices;
 namespace IRIS.Serial.Implementations
 {
     /// <summary>
-    /// Base class for RUSTIC devices
+    ///     Base class for RUSTIC devices
     /// </summary>
     public abstract class RUSTICSerialDeviceBase(
         SerialPortDeviceAddress deviceAddress,
@@ -16,18 +16,31 @@ namespace IRIS.Serial.Implementations
     ) : SerialDeviceBase(deviceAddress, settings)
     {
         /// <summary>
+        ///     Sends SET message to device and returns the response <br/>
+        ///     E.g. PROPERTY to desired value
+        /// </summary>
+        protected RUSTICDeviceProperty SetProperty(string message, string value)
+            => RUSTIC<CachedSerialPortInterface>.SetProperty(message, value, HardwareAccess, 100);
+      
+        /// <summary>
         /// Sends SET message to device and returns the response <br/>
         /// E.g. PROPERTY to desired value
         /// </summary>
-        protected ValueTask<RUSTICDeviceProperty> SetProperty<TValueType>(string message, TValueType value)
+        protected ValueTask<RUSTICDeviceProperty> SetPropertyAsync<TValueType>(string message, TValueType value)
             where TValueType : notnull
             => RUSTIC<CachedSerialPortInterface>.SetPropertyAsync(message, value.ToString() ?? string.Empty,
                 HardwareAccess, 100);
 
         /// <summary>
-        /// Sends GET message to device and returns the response <br/>
+        ///     Sends GET message to device and returns the response <br/>
         /// </summary>
-        protected ValueTask<RUSTICDeviceProperty> GetProperty(string propertyName)
+        protected RUSTICDeviceProperty GetProperty(string propertyName)
+            => RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
+        
+        /// <summary>
+        ///     Sends GET message to device and returns the response <br/>
+        /// </summary>
+        protected ValueTask<RUSTICDeviceProperty> GetPropertyAsync(string propertyName)
             => RUSTIC<CachedSerialPortInterface>.GetPropertyAsync(propertyName, HardwareAccess);
     }
 }

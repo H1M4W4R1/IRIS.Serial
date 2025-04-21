@@ -10,28 +10,28 @@ using IRIS.Utility;
 namespace IRIS.Serial.Communication
 {
     /// <summary>
-    /// Reliable serial port, as regular one is really unreliable in data receiving.
-    /// Buffers data as unbuffered event-driven solution would bend space-time continuum (quite literally).
+    ///     Reliable serial port, as regular one is really unreliable in data receiving.
+    ///     Buffers data as unbuffered event-driven solution would bend space-time continuum (quite literally).
     /// </summary>
     public sealed class CachedSerialPortInterface : SerialPort, IRawDataCommunicationInterface<SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Storage of all data received
+        ///     Storage of all data received
         /// </summary>
         private readonly List<byte> _dataReceived = new List<byte>();
         
         /// <summary>
-        /// C# serial port uses 1kB buffer by default, so we will use the same size
+        ///     C# serial port uses 1kB buffer by default, so we will use the same size
         /// </summary>
         private readonly byte[] _readBuffer = new byte[1024];
         
         /// <summary>
-        /// Local cancellation token source
+        ///     Local cancellation token source
         /// </summary>
         private CancellationTokenSource _cancellationTokenSource = new();
 
         /// <summary>
-        /// "Reference" to cancellation token
+        ///     "Reference" to cancellation token
         /// </summary>
         private CancellationToken _tokenRef = CancellationToken.None;
         
@@ -55,7 +55,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Connect to device - open port and start reading data
+        ///     Connect to device - open port and start reading data
         /// </summary>
         public async ValueTask<bool> ConnectAsync(CancellationToken cancellationToken)
         {
@@ -124,7 +124,7 @@ namespace IRIS.Serial.Communication
         }
         
         /// <summary>
-        /// Callback invoked when data is received
+        ///     Callback invoked when data is received
         /// </summary>
         private void OnDataReceived(IReadOnlyList<byte> data)
         {
@@ -141,7 +141,7 @@ namespace IRIS.Serial.Communication
 #region IRawDataCommunicationInterface
 
         /// <summary>
-        /// Transmit data to device over serial port
+        ///     Transmit data to device over serial port
         /// </summary>
         async ValueTask<bool> IRawDataCommunicationInterface.TransmitRawDataAsync(byte[] data)
         {
@@ -158,7 +158,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Read data from device over serial port
+        ///     Read data from device over serial port
         /// </summary>
         /// <param name="length">Amount of data to read</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>
@@ -199,7 +199,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Reads data until specified byte is found
+        ///     Reads data until specified byte is found
         /// </summary>
         /// <param name="receivedByte">Byte to find</param>
         /// <param name="cancellationToken">Used to cancel read operation</param>

@@ -16,19 +16,37 @@ namespace IRIS.Serial.Implementations
     ) : SerialDeviceBase(deviceAddress, settings)
     {
         /// <summary>
-        /// Exchange message with device
+        ///     Exchange message with device
+        /// </summary>
+        public string ExchangeMessages(string message) =>
+            LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
+        
+        /// <summary>
+        ///     Exchange message with device
         /// </summary>
         public ValueTask<string> ExchangeMessagesAsync(string message) =>
             LINE<CachedSerialPortInterface>.ExchangeMessagesAsync(HardwareAccess, message);
 
         /// <summary>
-        /// Send message to device
+        ///    Send message to device
+        /// </summary>
+        public bool SendMessage(string message) =>
+            LINE<CachedSerialPortInterface>.SendMessage(HardwareAccess, message);
+        
+        /// <summary>
+        ///     Send message to device
         /// </summary>
         public ValueTask<bool> SendMessageAsync(string message) =>
             LINE<CachedSerialPortInterface>.SendMessageAsync(HardwareAccess, message);
 
         /// <summary>
-        /// Read message from device
+        ///    Read message from device
+        /// </summary>
+        public string ReadMessage()
+            => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        
+        /// <summary>
+        ///     Read message from device
         /// </summary>
         public ValueTask<string> ReadMessageAsync()
             => LINE<CachedSerialPortInterface>.ReadMessageAsync(HardwareAccess);

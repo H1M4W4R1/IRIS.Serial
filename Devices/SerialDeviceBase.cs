@@ -6,13 +6,13 @@ using IRIS.Serial.Communication.Settings;
 namespace IRIS.Serial.Devices
 {
     /// <summary>
-    /// Represents device connected to computer via serial port
-    /// For example COM9 or /dev/ttyUSB0
+    ///     Represents device connected to computer via serial port
+    ///     For example COM9 or /dev/ttyUSB0
     /// </summary>
     public abstract class SerialDeviceBase : DeviceBase<CachedSerialPortInterface, SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Create serial device with specific address and settings
+        ///     Create serial device with specific address and settings
         /// </summary>
         protected SerialDeviceBase(SerialPortDeviceAddress deviceAddress, SerialInterfaceSettings settings)
         {
@@ -23,7 +23,7 @@ namespace IRIS.Serial.Devices
         }
 
         /// <summary>
-        /// Change device address to new one
+        ///     Change device address to new one
         /// </summary>
         public async ValueTask SetAddress(
             SerialPortDeviceAddress deviceAddress,
