@@ -1,4 +1,5 @@
-﻿using IRIS.Protocols.IRIS;
+﻿using IRIS.Data;
+using IRIS.Protocols.IRIS;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
 using IRIS.Serial.Communication.Settings;
@@ -17,18 +18,18 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public ValueTask<string?> ExchangeMessagesAsync(string message) =>
+        public string? ExchangeMessages(string message) =>
             LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
         /// Send message to device
         /// </summary>
-        public ValueTask<bool> SendMessageAsync(string message) =>
-            LINE<CachedSerialPortInterface>.SendMessageAsync(HardwareAccess, message);
+        public void SendMessage(string message) =>
+            LINE<CachedSerialPortInterface>.SendMessage(HardwareAccess, message);
 
         /// <summary>
         /// Read message from device
         /// </summary>
-        public ValueTask<string?> ReadMessageAsync() => LINE<CachedSerialPortInterface>.ReadMessageAsync(HardwareAccess);
+        public string? ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }
