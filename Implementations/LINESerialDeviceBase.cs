@@ -18,7 +18,7 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public DataPromise<string> ExchangeMessages(string message) =>
+        public string? ExchangeMessages(string message) =>
             LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
@@ -30,6 +30,6 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Read message from device
         /// </summary>
-        public DataPromise<string> ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        public string? ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }
