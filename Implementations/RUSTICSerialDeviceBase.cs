@@ -1,5 +1,4 @@
-﻿using IRIS.Data;
-using IRIS.Protocols.IRIS;
+﻿using IRIS.Protocols.IRIS;
 using IRIS.Protocols.IRIS.Data;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
@@ -20,15 +19,15 @@ namespace IRIS.Serial.Implementations
         /// Sends SET message to device and returns the response <br/>
         /// E.g. PROPERTY to desired value
         /// </summary>
-        protected RUSTICDeviceProperty? SetProperty<TValueType>(string message, TValueType value)
+        protected ValueTask<RUSTICDeviceProperty?> SetPropertyAsync<TValueType>(string message, TValueType value)
             where TValueType : notnull
-            => RUSTIC<CachedSerialPortInterface>.SetProperty(message, value.ToString() ?? string.Empty,
+            => RUSTIC<CachedSerialPortInterface>.SetPropertyAsync(message, value.ToString() ?? string.Empty,
                 HardwareAccess, 100);
 
         /// <summary>
         /// Sends GET message to device and returns the response <br/>
         /// </summary>
-        protected RUSTICDeviceProperty? GetProperty(string propertyName)
-            => RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
+        protected ValueTask<RUSTICDeviceProperty?> GetPropertyAsync(string propertyName)
+            => RUSTIC<CachedSerialPortInterface>.GetPropertyAsync(propertyName, HardwareAccess);
     }
 }
