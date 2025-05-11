@@ -1,5 +1,4 @@
-﻿using IRIS.Data;
-using IRIS.Protocols.IRIS;
+﻿using IRIS.Protocols.IRIS;
 using IRIS.Protocols.IRIS.Data;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
