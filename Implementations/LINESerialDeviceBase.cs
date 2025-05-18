@@ -17,18 +17,18 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Exchange message with device
         /// </summary>
-        public string? ExchangeMessages(string message) =>
+        public ValueTask<string?> ExchangeMessages(string message) =>
             LINE<CachedSerialPortInterface>.ExchangeMessages(HardwareAccess, message);
 
         /// <summary>
         /// Send message to device
         /// </summary>
-        public void SendMessage(string message) =>
+        public ValueTask<bool> SendMessage(string message) =>
             LINE<CachedSerialPortInterface>.SendMessage(HardwareAccess, message);
 
         /// <summary>
         /// Read message from device
         /// </summary>
-        public string? ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
+        public ValueTask<string?> ReadMessage() => LINE<CachedSerialPortInterface>.ReadMessage(HardwareAccess);
     }
 }

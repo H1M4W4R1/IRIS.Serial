@@ -9,10 +9,10 @@ namespace IRIS.Serial.Implementations
     public abstract class REAPSerialDeviceBase(SerialPortDeviceAddress deviceAddress,
         SerialInterfaceSettings settings) : SerialDeviceBase(deviceAddress, settings)
     {
-        public uint? SetRegister(uint register, uint value) =>
+        public ValueTask<uint?> SetRegister(uint register, uint value) =>
             REAP<CachedSerialPortInterface>.SetRegister(HardwareAccess, register, value);
         
-        public uint? GetRegister(uint register) =>
+        public ValueTask<uint?> GetRegister(uint register) =>
             REAP<CachedSerialPortInterface>.GetRegister(HardwareAccess, register);
     }
 }

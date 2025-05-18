@@ -19,7 +19,7 @@ namespace IRIS.Serial.Implementations
         /// Sends SET message to device and returns the response <br/>
         /// E.g. PROPERTY to desired value
         /// </summary>
-        protected RUSTICDeviceProperty? SetProperty<TValueType>(string message, TValueType value)
+        protected ValueTask<RUSTICDeviceProperty?> SetProperty<TValueType>(string message, TValueType value)
             where TValueType : notnull
             => RUSTIC<CachedSerialPortInterface>.SetProperty(message, value.ToString() ?? string.Empty,
                 HardwareAccess, 100);
@@ -27,7 +27,7 @@ namespace IRIS.Serial.Implementations
         /// <summary>
         /// Sends GET message to device and returns the response <br/>
         /// </summary>
-        protected RUSTICDeviceProperty? GetProperty(string propertyName)
+        protected ValueTask<RUSTICDeviceProperty?> GetProperty(string propertyName)
             => RUSTIC<CachedSerialPortInterface>.GetProperty(propertyName, HardwareAccess);
     }
 }
