@@ -14,9 +14,6 @@ namespace IRIS.Serial.Devices
     /// <item>Windows: COM1, COM9</item>
     /// <item>Linux: /dev/ttyUSB0, /dev/ttyACM0</item>
     /// </list>
-    /// 
-    /// <typeparam name="CachedSerialPortInterface">The type of hardware interface used for communication</typeparam>
-    /// <typeparam name="SerialPortDeviceAddress">The type representing the device's address</typeparam>
     /// </summary>
     public abstract class SerialDeviceBase : DeviceBase<CachedSerialPortInterface, SerialPortDeviceAddress>
     {
@@ -56,18 +53,18 @@ namespace IRIS.Serial.Devices
         /// <item>Reconnecting if previously connected</item>
         /// </list>
         /// </remarks>
-        public void SetAddress(
+        public async ValueTask SetAddress(
             SerialPortDeviceAddress deviceAddress,
             CancellationToken cancellationToken = default)
         {
             // Check if port is open
             bool wasPortOpen = HardwareAccess.IsOpen;
-            if (wasPortOpen) HardwareAccess.Disconnect();
+            if (wasPortOpen) await HardwareAccess.Disconnect();
 
             HardwareAccess.PortName = deviceAddress.ToString();
 
             // If port was open then connect again
-            if (wasPortOpen) HardwareAccess.Connect(cancellationToken);
+            if (wasPortOpen) await HardwareAccess.Connect(cancellationToken);
         }
     }
 }
