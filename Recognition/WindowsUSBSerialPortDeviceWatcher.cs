@@ -8,22 +8,42 @@ using Microsoft.Win32;
 namespace IRIS.Serial.Recognition
 {
     /// <summary>
-    /// This class is used to scan for all available USB serial port devices.
-    /// It validates the devices by checking the VID and PID of the device, so you can easily check if the device
-    /// is supported.
+    /// Windows-specific implementation of a USB serial port device watcher.
+    /// Scans for available USB serial port devices by querying Windows Management Instrumentation (WMI)
+    /// and the Windows Registry. Validates devices by checking Vendor ID (VID) and Product ID (PID).
+    /// 
+    /// When constructed with a specific USBDeviceAddress, only devices matching those identifiers will be returned.
+    /// When constructed without a specific address (null), all CDC (Communications Device Class) devices will be returned.
     /// </summary>
     public sealed class WindowsUSBSerialPortDeviceWatcher(USBDeviceAddress? hwAddress = null)
         : DeviceWatcherBase<WindowsUSBSerialPortDeviceWatcher, USBDeviceAddress, SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Hardware address of the device expected to be connected.
-        /// If null, all CDC devices will be returned.
+        /// Gets the hardware address filter for this watcher.
+        /// 
+        /// When null, the watcher will return all detected CDC devices.
+        /// When set, the watcher will only return devices matching the specified VID/PID combination.
         /// </summary>
         private USBDeviceAddress? HardwareAddress { get; } = hwAddress;
         
         /// <summary>
-        /// Scan for all available devices
+        /// Scans the system for available USB serial port devices.
+        /// 
+        /// This method:
+        /// 1. Verifies the platform is Windows (throws PlatformNotSupportedException otherwise)
+        /// 2. Queries WMI for all PnP devices
+        /// 3. Filters for devices in the "PORTS" class (GUID: 4D36E978-E325-11CE-BFC1-08002BE10318)
+        /// 4. Extracts port information from the Windows Registry
+        /// 5. Parses device IDs to get VID/PID information
+        /// 6. Applies hardware address filtering if specified
+        /// 
+        /// Returns a tuple containing:
+        /// - List of hardware addresses (VID/PID combinations)
+        /// - List of corresponding serial port addresses (COM port names)
         /// </summary>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        /// <returns>Tuple of hardware and software device addresses</returns>
+        /// <exception cref="PlatformNotSupportedException">Thrown when not running on Windows</exception>
         protected override ValueTask<(List<USBDeviceAddress>, List<SerialPortDeviceAddress>)>
             ScanForDevicesAsync(CancellationToken cancellationToken)
         {
@@ -102,6 +122,5 @@ namespace IRIS.Serial.Recognition
             // Return devices
             return ValueTask.FromResult((hardwareDevices, softwareDevices));
         }
-        
     }
 }

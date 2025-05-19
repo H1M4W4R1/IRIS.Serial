@@ -8,19 +8,42 @@ using IRIS.Serial.Addressing;
 namespace IRIS.Serial.Communication
 {
     /// <summary>
-    /// Serial port interface for communication with devices.
+    /// Provides a serial port interface implementation for device communication.
+    /// This sealed class inherits from System.IO.Ports.SerialPort and implements
+    /// the IRawDataCommunicationInterface for SerialPortDeviceAddress.
     /// </summary>
     public sealed class SerialPortInterface : SerialPort, IRawDataCommunicationInterface<SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Used when reading data stream by single character to prevent unnecessary allocations
+        /// Single-byte buffer used for character-by-character reading to optimize memory usage
         /// </summary>
         private readonly byte[] _singleCharReadBuffer = new byte[1];
        
+        /// <summary>
+        /// Event triggered when a device successfully connects
+        /// </summary>
         public event Delegates.DeviceConnectedHandler<SerialPortDeviceAddress>? DeviceConnected;
+        
+        /// <summary>
+        /// Event triggered when a device is properly disconnected
+        /// </summary>
         public event Delegates.DeviceDisconnectedHandler<SerialPortDeviceAddress>? DeviceDisconnected;
+        
+        /// <summary>
+        /// Event triggered when connection to a device is unexpectedly lost
+        /// </summary>
         public event Delegates.DeviceConnectionLostHandler<SerialPortDeviceAddress>? DeviceConnectionLost;
         
+        /// <summary>
+        /// Initializes a new instance of the SerialPortInterface with specified parameters
+        /// </summary>
+        /// <param name="portName">The name of the serial port (e.g. "COM1")</param>
+        /// <param name="baudRate">The baud rate for communication</param>
+        /// <param name="parity">The parity checking protocol</param>
+        /// <param name="dataBits">The number of data bits per byte</param>
+        /// <param name="stopBits">The number of stop bits</param>
+        /// <param name="dtrEnable">Whether to enable Data Terminal Ready (DTR) signal</param>
+        /// <param name="rtsEnable">Whether to enable Request to Send (RTS) signal</param>
         public SerialPortInterface(string portName,
             int baudRate,
             Parity parity,
@@ -42,8 +65,10 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Connect to device - open port and start reading data
+        /// Establishes connection with the serial device
         /// </summary>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        /// <returns>ValueTask containing true if connection succeeded, false otherwise</returns>
         public ValueTask<bool> Connect(CancellationToken cancellationToken)
         {
             // If port is already open, return
@@ -59,6 +84,10 @@ namespace IRIS.Serial.Communication
             return ValueTask.FromResult(true);
         }
 
+        /// <summary>
+        /// Terminates connection with the serial device
+        /// </summary>
+        /// <returns>ValueTask containing true if disconnection succeeded, false otherwise</returns>
         public ValueTask<bool> Disconnect()
         {
             // If port is not open, return
@@ -73,8 +102,10 @@ namespace IRIS.Serial.Communication
 #region IRawDataCommunicationInterface
 
         /// <summary>
-        /// Transmit data to device over serial port
+        /// Sends raw data to the connected device
         /// </summary>
+        /// <param name="data">Byte array containing data to transmit</param>
+        /// <returns>ValueTask containing true if transmission succeeded, false otherwise</returns>
         ValueTask<bool> IRawDataCommunicationInterface.TransmitRawData(byte[] data)
         {
             if (!IsOpen)
@@ -90,10 +121,11 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Read data from device over serial port
+        /// Reads a specified amount of raw data from the connected device
         /// </summary>
-        /// <param name="length">Amount of data to read</param>
-        /// <param name="cancellationToken">Used to cancel read operation</param>
+        /// <param name="length">Number of bytes to read</param>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        /// <returns>ValueTask containing the read data or empty array if failed</returns>
         ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawData(
             int length,
             CancellationToken cancellationToken)
@@ -136,10 +168,11 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Reads data until specified byte is found
+        /// Reads data from the device until a specified byte is encountered
         /// </summary>
-        /// <param name="receivedByte">Byte to find</param>
-        /// <param name="cancellationToken">Used to cancel read operation</param>
+        /// <param name="receivedByte">The termination byte to search for</param>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        /// <returns>ValueTask containing all read data up to and including the termination byte</returns>
         ValueTask<byte[]> IRawDataCommunicationInterface.ReadRawDataUntil(
             byte receivedByte,
             CancellationToken cancellationToken)
