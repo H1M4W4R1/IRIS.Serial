@@ -120,7 +120,7 @@ namespace IRIS.Serial.Communication
             // Write data to device
             Write(data, 0, data.Length);
 
-            return DeviceOperation.VResult<DataTransmittedSuccessfullyResult>();
+            return DeviceOperation.VResult<DeviceWriteSuccessfulResult>();
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return new DataReceivedSuccessfullyResult<byte[]>(data);
+            return new DeviceDataReadSuccessfulResult<byte[]>(data);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return new DataReceivedSuccessfullyResult<byte[]>(data.ToArray());
+            return new DeviceDataReadSuccessfulResult<byte[]>(data.ToArray());
         }
 
 #endregion

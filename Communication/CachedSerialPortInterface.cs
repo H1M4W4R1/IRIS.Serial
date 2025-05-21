@@ -202,7 +202,7 @@ namespace IRIS.Serial.Communication
             Write(data, 0, data.Length);
 
             // Return success
-            return DeviceOperation.VResult<DataTransmittedSuccessfullyResult>();
+            return DeviceOperation.VResult<DeviceWriteSuccessfulResult>();
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace IRIS.Serial.Communication
             if (cancellationToken.IsCancellationRequested) return DeviceOperation.Result<DeviceTimeoutResult>();
 
             // Check if data is available
-            if (totalLength < length) return DeviceOperation.Result<DeviceDataReadFailedResult>();
+            if (totalLength < length) return DeviceOperation.Result<DeviceReadFailedResult>();
 
             // Create buffer for data
             byte[] data = new byte[length];
@@ -243,7 +243,7 @@ namespace IRIS.Serial.Communication
             }
             
             // Return data
-            return new DataReceivedSuccessfullyResult<byte[]>(data);
+            return new DeviceDataReadSuccessfulResult<byte[]>(data);
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return new DataReceivedSuccessfullyResult<byte[]>(buffer);
+            return new DeviceDataReadSuccessfulResult<byte[]>(buffer);
         }
 
 #endregion
