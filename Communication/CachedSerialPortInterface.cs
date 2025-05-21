@@ -14,56 +14,56 @@ using IRIS.Utility.Awaitable;
 namespace IRIS.Serial.Communication
 {
     /// <summary>
-    /// Provides a reliable serial port implementation that buffers incoming data.
-    /// This addresses the unreliability of the standard .NET SerialPort class by implementing
-    /// a buffered data reception system. The class implements IRawDataCommunicationInterface
-    /// for raw byte-level communication with serial devices.
+    ///     Provides a reliable serial port implementation that buffers incoming data.
+    ///     This addresses the unreliability of the standard .NET SerialPort class by implementing
+    ///     a buffered data reception system. The class implements IRawDataCommunicationInterface
+    ///     for raw byte-level communication with serial devices.
     /// </summary>
     /// <remarks>
-    /// The buffered approach is necessary because unbuffered event-driven solutions
-    /// can cause performance issues and data loss at high data rates.
+    ///     The buffered approach is necessary because unbuffered event-driven solutions
+    ///     can cause performance issues and data loss at high data rates.
     /// </remarks>
     public sealed class CachedSerialPortInterface : SerialPort,
         IRawDataCommunicationInterface<SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Internal buffer storing all received data until it's read by the application
+        ///     Internal buffer storing all received data until it's read by the application
         /// </summary>
         private readonly List<byte> _dataReceived = new List<byte>();
 
         /// <summary>
-        /// Buffer used for reading data from the serial port
-        /// Matches the default 1kB buffer size used by .NET's SerialPort
+        ///     Buffer used for reading data from the serial port
+        ///     Matches the default 1kB buffer size used by .NET's SerialPort
         /// </summary>
         private readonly byte[] _readBuffer = new byte[1024];
 
         /// <summary>
-        /// Source for cancellation tokens to control the background read operation
+        ///     Source for cancellation tokens to control the background read operation
         /// </summary>
         private CancellationTokenSource _cancellationTokenSource = new();
 
         /// <summary>
-        /// Reference to the current cancellation token for the read operation
+        ///     Reference to the current cancellation token for the read operation
         /// </summary>
         private CancellationToken _tokenRef = CancellationToken.None;
 
         /// <summary>
-        /// Event raised when a device successfully connects
+        ///     Event raised when a device successfully connects
         /// </summary>
         public event Delegates.DeviceConnectedHandler<SerialPortDeviceAddress>? DeviceConnected;
 
         /// <summary>
-        /// Event raised when a device is intentionally disconnected
+        ///     Event raised when a device is intentionally disconnected
         /// </summary>
         public event Delegates.DeviceDisconnectedHandler<SerialPortDeviceAddress>? DeviceDisconnected;
 
         /// <summary>
-        /// Event raised when connection to a device is unexpectedly lost
+        ///     Event raised when connection to a device is unexpectedly lost
         /// </summary>
         public event Delegates.DeviceConnectionLostHandler<SerialPortDeviceAddress>? DeviceConnectionLost;
 
         /// <summary>
-        /// Initializes a new instance of the CachedSerialPortInterface with specified parameters
+        ///     Initializes a new instance of the CachedSerialPortInterface with specified parameters
         /// </summary>
         /// <param name="portName">The name of the serial port (e.g., "COM1")</param>
         /// <param name="baudRate">The baud rate for communication</param>
@@ -94,10 +94,9 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Establishes connection with the serial device
+        ///     Establishes connection with the serial device
         /// </summary>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
-        /// <returns>ValueTask indicating whether connection was successful</returns>
         public ValueTask<IDeviceOperationResult> Connect(CancellationToken cancellationToken)
         {
             // Do not connect if already connected
@@ -117,9 +116,8 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Disconnects from the serial device
+        ///     Disconnects from the serial device
         /// </summary>
-        /// <returns>ValueTask indicating whether disconnection was successful</returns>
         public ValueTask<IDeviceOperationResult> Disconnect()
         {
             // Check if port is open
@@ -137,7 +135,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Starts a continuous asynchronous read operation from the serial port
+        ///     Starts a continuous asynchronous read operation from the serial port
         /// </summary>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
         private async void BeginContinuousRead(CancellationToken cancellationToken)
@@ -173,7 +171,7 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Handles received data by adding it to the internal buffer
+        ///     Handles received data by adding it to the internal buffer
         /// </summary>
         /// <param name="data">The received data to process</param>
         private void OnDataReceived(IReadOnlyList<byte> data)
@@ -189,10 +187,9 @@ namespace IRIS.Serial.Communication
 #region IRawDataCommunicationInterface
 
         /// <summary>
-        /// Sends raw data to the connected device
+        ///     Sends raw data to the connected device
         /// </summary>
         /// <param name="data">The data to transmit</param>
-        /// <returns>ValueTask indicating whether transmission was successful</returns>
         ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.TransmitRawData(byte[] data)
         {
             if (!IsOpen)
@@ -209,11 +206,10 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Reads a specified amount of raw data from the device
+        ///     Reads a specified amount of raw data from the device
         /// </summary>
         /// <param name="length">Number of bytes to read</param>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
-        /// <returns>ValueTask containing the read data or empty array if cancelled/error</returns>
         async ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.ReadRawData(
             int length,
             CancellationToken cancellationToken)
@@ -251,11 +247,10 @@ namespace IRIS.Serial.Communication
         }
 
         /// <summary>
-        /// Reads data until a specific byte is encountered
+        ///     Reads data until a specific byte is encountered
         /// </summary>
         /// <param name="receivedByte">The byte to search for</param>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
-        /// <returns>ValueTask containing all data up to and including the search byte</returns>
         async ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.ReadRawDataUntil(
             byte receivedByte,
             CancellationToken cancellationToken)

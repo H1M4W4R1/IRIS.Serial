@@ -8,38 +8,34 @@ using Microsoft.Win32;
 namespace IRIS.Serial.Recognition
 {
     /// <summary>
-    /// Windows-specific implementation of a USB serial port device watcher.
-    /// Scans for available USB serial port devices by querying Windows Management Instrumentation (WMI)
-    /// and the Windows Registry. Validates devices by checking Vendor ID (VID) and Product ID (PID).
-    /// 
-    /// When constructed with a specific USBDeviceAddress, only devices matching those identifiers will be returned.
-    /// When constructed without a specific address (null), all CDC (Communications Device Class) devices will be returned.
+    ///     Windows-specific implementation of a USB serial port device watcher.
+    ///     Scans for available USB serial port devices by querying Windows Management Instrumentation (WMI)
+    ///     and the Windows Registry. Validates devices by checking Vendor ID (VID) and Product ID (PID).
+    ///     When constructed with a specific USBDeviceAddress, only devices matching those identifiers will be returned.
+    ///     When constructed without a specific address (null), all CDC (Communications Device Class) devices will be returned.
     /// </summary>
     public sealed class WindowsUSBSerialPortDeviceWatcher(USBDeviceAddress? hwAddress = null)
         : DeviceWatcherBase<WindowsUSBSerialPortDeviceWatcher, USBDeviceAddress, SerialPortDeviceAddress>
     {
         /// <summary>
-        /// Gets the hardware address filter for this watcher.
-        /// 
-        /// When null, the watcher will return all detected CDC devices.
-        /// When set, the watcher will only return devices matching the specified VID/PID combination.
+        ///     Gets the hardware address filter for this watcher.
+        ///     When null, the watcher will return all detected CDC devices.
+        ///     When set, the watcher will only return devices matching the specified VID/PID combination.
         /// </summary>
         private USBDeviceAddress? HardwareAddress { get; } = hwAddress;
-        
+
         /// <summary>
-        /// Scans the system for available USB serial port devices.
-        /// 
-        /// This method:
-        /// 1. Verifies the platform is Windows (throws PlatformNotSupportedException otherwise)
-        /// 2. Queries WMI for all PnP devices
-        /// 3. Filters for devices in the "PORTS" class (GUID: 4D36E978-E325-11CE-BFC1-08002BE10318)
-        /// 4. Extracts port information from the Windows Registry
-        /// 5. Parses device IDs to get VID/PID information
-        /// 6. Applies hardware address filtering if specified
-        /// 
-        /// Returns a tuple containing:
-        /// - List of hardware addresses (VID/PID combinations)
-        /// - List of corresponding serial port addresses (COM port names)
+        ///     Scans the system for available USB serial port devices.
+        ///     This method:
+        ///     1. Verifies the platform is Windows (throws PlatformNotSupportedException otherwise)
+        ///     2. Queries WMI for all PnP devices
+        ///     3. Filters for devices in the "PORTS" class (GUID: 4D36E978-E325-11CE-BFC1-08002BE10318)
+        ///     4. Extracts port information from the Windows Registry
+        ///     5. Parses device IDs to get VID/PID information
+        ///     6. Applies hardware address filtering if specified
+        ///     Returns a tuple containing:
+        ///     - List of hardware addresses (VID/PID combinations)
+        ///     - List of corresponding serial port addresses (COM port names)
         /// </summary>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
         /// <returns>Tuple of hardware and software device addresses</returns>
