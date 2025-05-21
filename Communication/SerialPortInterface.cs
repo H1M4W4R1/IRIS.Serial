@@ -160,7 +160,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return new DeviceDataReadSuccessfulResult<byte[]>(data);
+            return new DeviceReadSuccessful<byte[]>(data);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace IRIS.Serial.Communication
             }
 
             // Return data
-            return new DeviceDataReadSuccessfulResult<byte[]>(data.ToArray());
+            return new DeviceReadSuccessful<byte[]>(data.ToArray());
         }
 
 #endregion
