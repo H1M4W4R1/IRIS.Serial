@@ -3,6 +3,7 @@ using IRIS.Communication;
 using IRIS.Communication.Types;
 using IRIS.Operations;
 using IRIS.Operations.Abstract;
+using IRIS.Operations.Attributes;
 using IRIS.Operations.Connection;
 using IRIS.Operations.Data;
 using IRIS.Operations.Generic;
@@ -210,6 +211,7 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="length">Number of bytes to read</param>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        [OperationReadType(typeof(byte[]))]
         async ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.ReadRawData(
             int length,
             CancellationToken cancellationToken)
@@ -251,6 +253,7 @@ namespace IRIS.Serial.Communication
         /// </summary>
         /// <param name="receivedByte">The byte to search for</param>
         /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        [OperationReadType(typeof(byte[]))]
         async ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.ReadRawDataUntil(
             byte receivedByte,
             CancellationToken cancellationToken)
