@@ -56,8 +56,8 @@ namespace IRIS.Serial.Recognition
             string[] ports = SerialPort.GetPortNames();
             
             // Create lists for hardware and software devices
-            List<SerialPortDeviceAddress> hardwareDevices = new();
-            List<SerialPortDeviceAddress> softwareDevices = new();
+            List<SerialPortDeviceAddress> hardwareDevices = [];
+            List<SerialPortDeviceAddress> softwareDevices = hardwareDevices;
             
             // Loop through all ports
             for (int serialPortIndex = 0; serialPortIndex < ports.Length; serialPortIndex++)
@@ -68,7 +68,6 @@ namespace IRIS.Serial.Recognition
 
                 // Add device to list
                 hardwareDevices.Add(deviceAddress);
-                softwareDevices.Add(deviceAddress);
             }
             
             // Return devices
