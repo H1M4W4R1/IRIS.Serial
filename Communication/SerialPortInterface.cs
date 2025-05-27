@@ -110,7 +110,8 @@ namespace IRIS.Serial.Communication
         ///     Sends raw data to the connected device
         /// </summary>
         /// <param name="data">Byte array containing data to transmit</param>
-        ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.TransmitRawData(byte[] data)
+        /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+        ValueTask<IDeviceOperationResult> IRawDataCommunicationInterface.TransmitRawData(byte[] data, CancellationToken cancellationToken)
         {
             if (!IsOpen)
             {

@@ -1,4 +1,8 @@
-﻿using IRIS.Devices;
+﻿using System.Text;
+using IRIS.Communication.Types;
+using IRIS.Devices;
+using IRIS.Operations;
+using IRIS.Operations.Abstract;
 using IRIS.Serial.Addressing;
 using IRIS.Serial.Communication;
 using IRIS.Serial.Communication.Settings;
@@ -68,6 +72,99 @@ namespace IRIS.Serial.Devices
 
             // If port was open then connect again
             if (wasPortOpen) await HardwareAccess.Connect(cancellationToken);
+        }
+
+        /// <summary>
+        ///     Sends data over the serial port
+        /// </summary>
+        /// <param name="data">Data to send</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>True if data was sent successfully</returns>
+        public async ValueTask<bool> WriteBytes(byte[] data, CancellationToken cancellationToken = default)
+            => DeviceOperation.IsSuccess(
+                await ((IRawDataCommunicationInterface) HardwareAccess).TransmitRawData(data, cancellationToken));
+
+        /// <summary>
+        ///     Reads specified amount of data from the serial port
+        /// </summary>
+        /// <param name="count">Amount of data to read</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Data read from the serial port</returns>
+        /// <exception cref="IOException">Thrown if data could not be read from the serial port</exception>
+        public async ValueTask<byte[]> ReadBytes(int count, CancellationToken cancellationToken = default)
+        {
+            IDeviceOperationResult result =
+                await ((IRawDataCommunicationInterface) HardwareAccess).ReadRawData(count, cancellationToken);
+            
+            // Check if result is success
+            if (DeviceOperation.IsFailure(result)) throw new IOException("Failed to read data from device");
+            
+            // Check if result is of proper type
+            if (result is not IDeviceOperationResult<byte[]> operationWithData)
+                throw new IOException("Failed to read data from device");
+            
+            return operationWithData.Data;
+        }
+        
+        /// <summary>
+        ///     Reads data from the serial port until the specified byte is encountered
+        /// </summary>
+        /// <param name="receivedByte">Byte to wait for</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Data read from the serial port</returns>
+        /// <exception cref="IOException">Thrown if data could not be read from the serial port</exception>
+        public async ValueTask<byte[]> ReadBytesUntil(byte receivedByte, CancellationToken cancellationToken = default)
+        {
+            IDeviceOperationResult result =
+                await ((IRawDataCommunicationInterface) HardwareAccess).ReadRawDataUntil(receivedByte, cancellationToken);
+            
+            // Check if result is success
+            if (DeviceOperation.IsFailure(result)) throw new IOException("Failed to read data from device");
+            
+            // Check if result is of proper type
+            if (result is not IDeviceOperationResult<byte[]> operationWithData)
+                throw new IOException("Failed to read data from device");
+            
+            return operationWithData.Data;
+        }
+
+        /// <summary>
+        ///     Writes a string to the serial port
+        /// </summary>
+        /// <param name="data">String to write</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="encoding">Encoding to use, ASCII if null</param>
+        /// <returns>True if data was sent successfully</returns>
+        /// <exception cref="IOException">Thrown if data could not be sent to the serial port</exception>
+        /// <remarks>
+        ///     Uses <see cref="WriteBytes"/> implementation.
+        /// </remarks>
+        public async ValueTask<bool> WriteString(
+            string data,
+            CancellationToken cancellationToken = default,
+            Encoding? encoding = null)
+        {
+            encoding ??= Encoding.ASCII;
+            return await WriteBytes(encoding.GetBytes(data), cancellationToken);
+        }
+        
+        /// <summary>
+        ///     Reads a string from the serial port, string is terminated by 0xA (Line Feed)
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="encoding">Encoding to use, ASCII if null</param>
+        /// <returns>String read from the serial port</returns>
+        /// <exception cref="IOException">Thrown if data could not be read from the serial port</exception>
+        /// <remarks>
+        ///     Uses <see cref="ReadBytesUntil"/> implementation.
+        /// </remarks>
+        public async ValueTask<string> ReadString(
+            CancellationToken cancellationToken = default,
+            Encoding? encoding = null)
+        {
+            encoding ??= Encoding.ASCII;
+            byte[] data = await ReadBytesUntil((byte) 0xA, cancellationToken);
+            return encoding.GetString(data);
         }
     }
 }
