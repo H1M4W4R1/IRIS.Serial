@@ -8,6 +8,7 @@ using IRIS.Operations.Connection;
 using IRIS.Operations.Data;
 using IRIS.Operations.Generic;
 using IRIS.Serial.Addressing;
+using IRIS.Utility;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
@@ -78,15 +79,24 @@ namespace IRIS.Serial.Communication
         public ValueTask<IDeviceOperationResult> Connect(CancellationToken cancellationToken)
         {
             // If port is already open, return
-            if (IsOpen) return DeviceOperation.VResult<DeviceAlreadyConnectedResult>();
+            if (IsOpen)
+            {
+                Notify.Verbose(nameof(SerialPortInterface), $"Device is already connected {PortName}");
+                return DeviceOperation.VResult<DeviceAlreadyConnectedResult>();
+            }
 
             // Open the port
             Open();
 
-            if (!IsOpen) return DeviceOperation.VResult<DeviceConnectionFailedResult>();
+            if (!IsOpen)
+            {
+                Notify.Error(nameof(SerialPortInterface), $"Cannot connect to device {PortName}");
+                return DeviceOperation.VResult<DeviceConnectionFailedResult>();
+            }
 
             // Invoke connected event
             DeviceConnected?.Invoke(new SerialPortDeviceAddress(PortName));
+            Notify.Success(nameof(SerialPortInterface), $"Successfully connected to device {PortName}");
             return DeviceOperation.VResult<DeviceConnectedSuccessfullyResult>();
         }
 
@@ -96,11 +106,16 @@ namespace IRIS.Serial.Communication
         public ValueTask<IDeviceOperationResult> Disconnect()
         {
             // If port is not open, return
-            if (!IsOpen) return DeviceOperation.VResult<DeviceConnectionFailedResult>();
+            if (!IsOpen)
+            {
+                Notify.Verbose(nameof(SerialPortInterface), $"Device {PortName} is not connected");
+                return DeviceOperation.VResult<DeviceConnectionFailedResult>();
+            }
             Close();
 
             // Invoke disconnected event
             DeviceDisconnected?.Invoke(new SerialPortDeviceAddress(PortName));
+            Notify.Success(nameof(SerialPortInterface), $"Disconnected from device {PortName}");
             return DeviceOperation.VResult<DeviceDisconnectedSuccessfullyResult>();
         }
 
@@ -115,6 +130,7 @@ namespace IRIS.Serial.Communication
         {
             if (!IsOpen)
             {
+                Notify.Error(nameof(SerialPortInterface), $"Device {PortName} is not connected");
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
                 return DeviceOperation.VResult<DeviceNotConnectedResult>();
             }
@@ -138,6 +154,7 @@ namespace IRIS.Serial.Communication
             if (!IsOpen)
             {
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
+                Notify.Error(nameof(SerialPortInterface), $"Device {PortName} is not connected");
                 return DeviceOperation.Result<DeviceNotConnectedResult>();
             }
 
@@ -158,6 +175,7 @@ namespace IRIS.Serial.Communication
                 }
                 catch (TaskCanceledException)
                 {
+                    Notify.Error(nameof(SerialPortInterface), $"Data reading on device {PortName} was cancelled.");
                     return DeviceOperation.Result<DeviceTimeoutResult>();
                 }
             }
@@ -180,6 +198,7 @@ namespace IRIS.Serial.Communication
             if (!IsOpen)
             {
                 DeviceConnectionLost?.Invoke(new SerialPortDeviceAddress(PortName));
+                Notify.Error(nameof(SerialPortInterface), $"Device {PortName} is not connected");
                 return DeviceOperation.Result<DeviceNotConnectedResult>();
             }
 
@@ -196,7 +215,10 @@ namespace IRIS.Serial.Communication
 
                     // Check if cancellation is requested
                     if (cancellationToken.IsCancellationRequested)
+                    {
+                        Notify.Error(nameof(SerialPortInterface), $"Data reading on device {PortName} was cancelled.");
                         return DeviceOperation.Result<DeviceTimeoutResult>();
+                    }
 
                     // Check if data is read
                     if (readBytesCount == 0) continue;
@@ -209,6 +231,7 @@ namespace IRIS.Serial.Communication
                 }
                 catch (TaskCanceledException)
                 {
+                    Notify.Error(nameof(SerialPortInterface), $"Data reading on device {PortName} was cancelled.");
                     return DeviceOperation.Result<DeviceTimeoutResult>();
                 }
             }
