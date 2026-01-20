@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.IO.Ports;
+using System.Text;
+using IRIS.Communication;
 using IRIS.Communication.Types;
 using IRIS.Devices;
 using IRIS.Operations;
@@ -83,7 +85,7 @@ namespace IRIS.Serial.Devices
         public async ValueTask<bool> WriteBytes(byte[] data, CancellationToken cancellationToken = default)
             => DeviceOperation.IsSuccess(
                 await ((IRawDataCommunicationInterface) HardwareAccess).TransmitRawData(data, cancellationToken));
-
+        
         /// <summary>
         ///     Reads specified amount of data from the serial port
         /// </summary>
@@ -165,6 +167,22 @@ namespace IRIS.Serial.Devices
             encoding ??= Encoding.ASCII;
             byte[] data = await ReadBytesUntil((byte) 0xA, cancellationToken);
             return encoding.GetString(data);
+        }
+
+        /// <summary>
+        ///     Enables custom data event handling
+        /// </summary>
+        public void UseCustomDataEvent(Delegates.DataReceivedHandler callback)
+        {
+            HardwareAccess.SerialDataReceived += callback;
+        }
+        
+        /// <summary>
+        ///     Disables custom data event handling
+        /// </summary>
+        public void StopUsingCustomDataEvent(Delegates.DataReceivedHandler callback)
+        {
+            HardwareAccess.SerialDataReceived -= callback;
         }
     }
 }

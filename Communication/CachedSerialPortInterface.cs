@@ -65,6 +65,11 @@ namespace IRIS.Serial.Communication
         public event Delegates.DeviceConnectionLostHandler<SerialPortDeviceAddress>? DeviceConnectionLost;
 
         /// <summary>
+        ///     Event raised when data is received from the serial port
+        /// </summary>
+        public event Delegates.DataReceivedHandler? SerialDataReceived;
+        
+        /// <summary>
         ///     Initializes a new instance of the CachedSerialPortInterface with specified parameters
         /// </summary>
         /// <param name="portName">The name of the serial port (e.g., "COM1")</param>
@@ -200,6 +205,8 @@ namespace IRIS.Serial.Communication
                 byte dataByte = data[index];
                 lock (_dataReceived) _dataReceived.Add(dataByte);
             }
+
+            SerialDataReceived?.Invoke(data.Count);
         }
 
 #region IRawDataCommunicationInterface
